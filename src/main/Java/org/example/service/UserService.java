@@ -20,7 +20,5 @@ public interface UserService {
 
     User findUserById(Long id);
 
-    UserDetails loadUserByUsername(String username);
-
     void addInitData();
 }

@@ -21,7 +21,7 @@ public class Role implements GrantedAuthority {
     private String role;
 
     @Transient
-    @ManyToMany(cascade = CascadeType.MERGE, mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles")
     private Set<User> usersSet = new HashSet<>();
 
     public Role() {

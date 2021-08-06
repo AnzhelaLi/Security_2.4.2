@@ -42,12 +42,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Transactional
     @Override
-    public User justSaveUser(User user) {
-        return userDao.justSaveUser(user);
+    public User justSaveUser(User user) {  //метод для addInitData(), который заполняет базу данных при
+        return userDao.justSaveUser(user); //старте приложения
     }
 
     @Override
-    public User registerUser(User user) {
+    public User registerUser(User user) { //метод для сохранения новых юзеров
         User userFromDb = userDao.getUserByName(user.getUsername());
         Role role = roleDao.findByRole("ROLE_USER");
         if (userFromDb == null) {
@@ -72,10 +72,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Transactional
     @Override
-    public User updateUser(User user) {
+    public User updateUser(User user) { //метод для редактирования user-данных
 
         user.setRoles(new HashSet<>(Arrays.asList(roleDao.findByRole("ROLE_USER"))));
-        user.setPassword(user.getPassword());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userDao.updateUser(user);
     }
 
@@ -95,32 +95,33 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userDao.getUserByName(username);
-        if(user == null ) {
+        if (user == null) {
             throw new UsernameNotFoundException("username not found");
         }
-     Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         for (Role role : user.getRoles()) {
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getRole()));
         }
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
                 grantedAuthorities);
     }
+
     @Override
     @Transactional
-    public void addInitData() {
-
-        User admin = new User("Ivan", "Ivanov", "Kinopark", 33, 64000, "ivan", "$2a$10$lFKon/xhqc769YOIrMKU4ud7cfNX69wtHO/8.3B7ig2b7iWWcdDoW");
-        User user = new User("Ivana", "Ivanova", "Kinopark", 36, 60000, "ivanka", "$2a$10$.hJ0iBBXVe98VY1V08fpmeRnczMqb/AQackZzyt27xIxledXxynRa");
+    public void addInitData() { //заполнение базы данных при запуске приложения, @PostConstruct
+        //добавление пользователей - admin, user
+        User admin = new User("Ivan", "Ivanov", "Kinopark", 33, 64000, "ivan", passwordEncoder.encode("password"));
+        User user = new User("Ivana", "Ivanova", "Kinopark", 36, 60000, "ivanka", passwordEncoder.encode("kinopark123"));
 
         userDao.justSaveUser(admin);
         userDao.justSaveUser(user);
-
+        //добавление ролей
         Role roleAdmin = new Role("ROLE_ADMIN");
         Role roleUser = new Role("ROLE_USER");
 
         roleDao.saveRole(roleAdmin);
         roleDao.saveRole(roleUser);
-
+        //для того, чтобы заполнить joinTable "users_roles
         admin.addRole(roleAdmin);
         admin.addRole(roleUser);
         user.addRole(roleUser);
@@ -129,11 +130,5 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         roleUser.addUser(admin);
         roleUser.addUser(user);
 
-    }
-
-    public static void main(String[] args) {
-        UserServiceImpl us = new UserServiceImpl();
-        System.out.println(us.passwordEncoder.encode("100"));
-        System.out.println(us.passwordEncoder.encode("200"));
     }
 }

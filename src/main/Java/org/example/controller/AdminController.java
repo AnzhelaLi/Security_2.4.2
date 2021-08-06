@@ -1,11 +1,14 @@
 package org.example.controller;
 
+
+import javax.validation.Valid;
+
 import org.example.service.UserService;
 import org.example.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -14,11 +17,9 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AdminController(UserService userService, PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
+    public AdminController(UserService userService) {
         this.userService = userService;
     }
 
@@ -34,21 +35,26 @@ public class AdminController {
         return "users/edit";
     }
 
-    @PatchMapping("/{id}")
-    public String update(@ModelAttribute("user") User user) {
+    @PatchMapping("/{id}") //@Valid, после аннотации - BindingResult!
+    public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "users/edit";
+        }
         userService.updateUser(user);
         return "redirect:/admin/allUsers";
     }
 
     @GetMapping("/new") //форма для нового юзера
-    public String newUser(Model model) {           //@ModelAttribute
+    public String newUser(Model model) {
         model.addAttribute("user", new User());
-
         return "users/new";
     }
 
     @PostMapping//перенаправление на страницу всех юзеров
-    public String create(@ModelAttribute("user") User user) {
+    public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "users/new";
+        }
         userService.registerUser(user);
         return "redirect:/admin/allUsers";
     }
@@ -58,5 +64,4 @@ public class AdminController {
         userService.deleteUser(id);
         return "redirect:/admin/allUsers";
     }
-
 }

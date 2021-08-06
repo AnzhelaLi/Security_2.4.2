@@ -12,7 +12,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-import java.util.Objects;
 import java.util.Properties;
 
 
@@ -61,8 +60,6 @@ public class PersistenceJpaConfig {
         properties.setProperty("hibernate.hbm2ddl.auto", "create"); //авто создание таблиц при запуске Томката
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL57Dialect");//Томкат использует этот диалект
         properties.setProperty("hibernate.show_sql", "true"); //показывать в консоли происходящее с таблицами
-        //properties.setProperty("spring.datasource.initialization-mode", "always"); // работает только с бут приложениями, запуск из sql файла
-        //properties.setProperty("spring.datasource.data", "classpath*:data.sql"); // пусть к sql файлу
         return properties;
     }
 }

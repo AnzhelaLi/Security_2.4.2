@@ -11,19 +11,29 @@
 <form th:action="@{/admin}" th:object="${user}" th:method="post">
     <label for="name">First_name:</label>
     <input type="text" th:field="*{name}" id="name"/>
+    <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</div>
+    <br/>
     <label for="surname">Last name:</label>
     <input type="text" th:field="*{surname}" id="surname"/>
+    <div style="color:red" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}">Surname error</div>
+    <br/>
     <label for="workplace">Workplace:</label>
     <input type="text" th:field="*{workplace}" id="workplace"/>
+    <br/>
     <label for="age">Age: </label>
     <input type="number" th:field="*{age}" id="age"/>
+    <div style="color:red" th:if="${#fields.hasErrors('age')}" th:errors="*{age}">Age error</div>
+    <br/>
     <label for="salary">Salary</label>
     <input type="number" th:field="*{salary}" id="salary"/>
+    <br/>
     <label for="username">Username: </label>
     <input type="text" th:field="*{username}" id="username"/>
+    <div style="color:red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username error</div>
+    <br/>
     <label for="password">Password: </label>
     <input type="text" th:field="*{password}" id="password"/>
-
+    <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</div>
     <br/>
     <p><input type="submit" value="Save"/></p>
 </form>
