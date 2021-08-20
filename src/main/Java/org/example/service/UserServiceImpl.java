@@ -2,6 +2,7 @@ package org.example.service;
 
 import org.example.dao.RoleDao;
 import org.example.dao.UserDao;
+import org.example.dao.UserDaoImpl;
 import org.example.model.Role;
 import org.example.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ import java.util.Set;
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
 
-    private UserDao userDao;
+    private UserDao userDao = new UserDaoImpl();
     private RoleDao roleDao;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -43,15 +44,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Transactional
     @Override
     public User justSaveUser(User user) {  //метод для addInitData(), который заполняет базу данных при
-        return userDao.justSaveUser(user); //старте приложения
+        return userDao.justSaveUser(user); //для метода Init - при старте приложения
     }
 
     @Override
-    public User registerUser(User user) { //метод для сохранения новых юзеров
+    public User registerUser(User user, Set<Role> rolesFromCheckbox) { //метод для сохранения новых юзеров
         User userFromDb = userDao.getUserByName(user.getUsername());
-        Role role = roleDao.findByRole("ROLE_USER");
+        //Role role = roleDao.findRoleByRoleName("ROLE_USER");
+
         if (userFromDb == null) {
-            user.setRoles(new HashSet<>(Arrays.asList(role)));
+           // user.setRoles(new HashSet<>(Arrays.asList(role)));
+            user.setRoles(rolesFromCheckbox);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userDao.justSaveUser(user);
         } else {
@@ -72,9 +75,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Transactional
     @Override
-    public User updateUser(User user) { //метод для редактирования user-данных
+    public User updateUser(User user, Set<Role> roles) { //метод для редактирования user-данных
 
-        user.setRoles(new HashSet<>(Arrays.asList(roleDao.findByRole("ROLE_USER"))));
+        //user.setRoles(new HashSet<>(Arrays.asList(roleDao.findByRole("ROLE_USER"))));
+        user.setRoles(roles); //роли должны быть после merge(updateRole)
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userDao.updateUser(user);
     }
@@ -121,7 +125,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         roleDao.saveRole(roleAdmin);
         roleDao.saveRole(roleUser);
-        //для того, чтобы заполнить joinTable "users_roles
+        //для того, чтобы заполнить joinTable "users_roles (назначить роли пользователям)
         admin.addRole(roleAdmin);
         admin.addRole(roleUser);
         user.addRole(roleUser);
@@ -129,6 +133,5 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         roleAdmin.addUser(admin);
         roleUser.addUser(admin);
         roleUser.addUser(user);
-
     }
 }

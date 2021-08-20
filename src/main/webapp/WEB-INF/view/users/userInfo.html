@@ -7,10 +7,8 @@
     <title>User Page</title>
 </head>
 <body>
-
-<table >
+<table>
     <tr>
-
         <th>Id</th>
         <th>First_name</th>
         <th>Last_name</th>
@@ -18,9 +16,8 @@
         <th>Age</th>
         <th>Salary</th>
         <th>Username</th>
-
+        <th>Role</th>
     </tr>
-
 <tr>
     <td th:text="${user.getId()}"></td>
     <td th:text="${user.getName()}"></td>
@@ -29,9 +26,12 @@
     <td th:text="${user.getAge()}"></td>
     <td th:text="${user.getSalary()}"></td>
     <td th:text="${user.getUsername()}"></td>
-
+    <td>
+        <p   th:each="role : ${user.roles}">
+            <span th:text="${role.role.toString().replaceFirst('ROLE_', '').replaceAll(',', '')}">Roles</span>
+        </p>
+    </td>
 </tr>
-
 </table>
 </body>
 </html>

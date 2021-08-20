@@ -47,7 +47,6 @@ public class UserDaoImpl implements UserDao {
     @Transactional
     @Override
     public User updateUser(User updatedUser) {
-
         entityManager.merge(updatedUser);
 
         return updatedUser;
@@ -63,14 +62,14 @@ public class UserDaoImpl implements UserDao {
         return entityManager.find(User.class, id);
     }
 
-
     @Override
     public User getUserByName(String username) {
+
         try {
             return entityManager.
-                    createQuery("from User u inner JOIN fetch u.roles where u.username = :username", User.class).
+                    createQuery("select u from User u where u.username = :username", User.class).
                     setParameter("username", username).getSingleResult();
-        } catch (NoResultException | NullPointerException e) {
+        } catch (NoResultException e) {
             e.printStackTrace();
             return null;
         }

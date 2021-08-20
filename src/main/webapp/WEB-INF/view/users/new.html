@@ -27,6 +27,14 @@
     <label for="salary">Salary</label>
     <input type="number" th:field="*{salary}" id="salary"/>
     <br/>
+    <p>
+        <label>Roles:
+            <br/>
+            <input type = "checkbox" name = "roles" value = "ROLE_User"   >User  <br>
+            <input type = "checkbox" name = "roles" value = "ROLE_Admin"    >Admin  <br>
+        </label>
+    </p>
+    <br/>
     <label for="username">Username: </label>
     <input type="text" th:field="*{username}" id="username"/>
     <div style="color:red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username error</div>

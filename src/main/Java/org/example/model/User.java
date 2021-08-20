@@ -1,7 +1,9 @@
 package org.example.model;
 
+import org.example.service.UserServiceImpl;
 import org.springframework.security.core.GrantedAuthority;
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
@@ -9,14 +11,11 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-import java.util.Collection;
+import java.util.*;
 
-import java.util.HashSet;
-import java.util.Set;
+
 // Для того, чтобы в дальнейшим использовать класс User в Spring Security, он должен реализовывать интерфейс UserDetails.
 // UserDetails можно представить, как адаптер между БД пользователей и тем что требуется Spring Security внутри SecurityContextHolder
-
-
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
@@ -55,7 +54,7 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @ManyToMany
+    @ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
@@ -85,9 +84,7 @@ public class User implements UserDetails {
 
     }
 
-    public User() {
-
-    }
+    public User() {}
 
     public Long getId() {
         return id;
@@ -151,7 +148,6 @@ public class User implements UserDetails {
 
     public void addRole(Role role) {
         this.roles.add(role);
-
     }
 
     public void setUsername(String username) {
@@ -170,8 +166,9 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
-        return getRoles();
+       Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+       roles.forEach(r->grantedAuthorities.add(new SimpleGrantedAuthority(r.getRole())));
+        return grantedAuthorities;
     }
 
     @Override
@@ -193,5 +190,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 }

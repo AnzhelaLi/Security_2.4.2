@@ -2,12 +2,20 @@ package org.example.service;
 
 import org.example.model.Role;
 
+import java.util.List;
+import java.util.Set;
+
 
 public interface RoleService {
 
     Role saveRole(Role role);
 
-    Role updateRole(Role updatedRole);
+    Set <Role> rolesFromCheckbox(String[] listOfRolesNameFromCheckbox);
 
-    Role findByRole(String role);
+    Role findRoleByRoleName(String role);
+
+    List<Role> allRoles();
+
+    List<Role> findRoleByUsername(String username);
+
 }

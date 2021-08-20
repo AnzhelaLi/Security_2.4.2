@@ -1,11 +1,11 @@
 package org.example.model;
 
-
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+
 
 // Этот класс реализует интерфейс GrantedAuthority, в котором необходимо переопределить только один метод getAuthority() (возвращает имя роли).
 // Имя роли должно соответствовать шаблону: «ROLE_ИМЯ», например, ROLE_USER.
@@ -15,12 +15,12 @@ public class Role implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "role_id")
+    @Column(name = "role_id", nullable = false)
     private Long id;
     @Column(name = "role", unique = true)
     private String role;
 
-    @Transient
+    @Transient // в бд не будет создаваться колонка
     @ManyToMany(mappedBy = "roles")
     private Set<User> usersSet = new HashSet<>();
 
@@ -30,6 +30,10 @@ public class Role implements GrantedAuthority {
     public Role(String role) {
 
         this.role = role;
+    }
+
+    public Role(Long id) {
+        this.id = id;
     }
 
     public Long getId() {
@@ -65,4 +69,8 @@ public class Role implements GrantedAuthority {
         return getRole();
     }
 
+    @Override
+    public String toString() {
+        return role.replaceAll("ROLE_", "");
+    } //метод не работает при выводе ролей на страницу
 }

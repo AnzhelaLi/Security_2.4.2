@@ -31,11 +31,12 @@
         <th>Age</th>
         <th>Salary</th>
         <th>Username</th>
+        <th>Role</th>
         <th>Managing</th>
     </tr>
 
-    <tr th:each="user, state : ${users}"
-        class="row" th:classsppend="${state.odd} ? 'odd-row' : 'even-row'">
+    <tr th:each="user : ${users}">
+
         <td th:utext="${user.id}">Id</td>
         <td th:utext="${user.name}">First_name</td>
         <td th:utext="${user.surname}">Last_name</td>
@@ -43,12 +44,18 @@
         <td th:utext="${user.age}">Age</td>
         <td th:utext="${user.salary}">Salary</td>
         <td th:utext="${user.username}">Username</td>
+        <td>
+            <p   th:each="role : ${user.roles}">
+                <span th:text="${role.role.toString().replaceFirst('ROLE_', '').replaceAll(',', '')}">Roles</span>
+            </p>
+        </td>
      <td>
             <a th:href="@{/admin/{id}/edit(id=${user.getId()})}">Edit</a>
             <form th:method="delete" th:action="@{/admin/{id}(id=${user.getId()})}">
                 <input type="submit" value="delete"/>
             </form>
         </td>
+
     </tr>
 </table>
 
