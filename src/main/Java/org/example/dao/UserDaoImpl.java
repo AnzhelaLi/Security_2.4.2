@@ -29,7 +29,7 @@ public class UserDaoImpl implements UserDao {
         this.roleDao = roleDao;
     }
 
-    @Transactional
+    
     @Override
     public User justSaveUser(User user) {
         entityManager.persist(user);
@@ -44,7 +44,7 @@ public class UserDaoImpl implements UserDao {
 
     }
 
-    @Transactional
+    
     @Override
     public User updateUser(User updatedUser) {
         entityManager.merge(updatedUser);
