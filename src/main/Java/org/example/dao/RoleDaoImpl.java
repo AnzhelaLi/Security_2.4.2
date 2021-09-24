@@ -20,7 +20,7 @@ public class RoleDaoImpl implements RoleDao {
         return role;
     }
 
-    @Transactional
+    
     @Override
     public Role updateRole(Role updatedRole) {
         entityManager.merge(updatedRole);
